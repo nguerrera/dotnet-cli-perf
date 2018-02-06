@@ -71,6 +71,8 @@ namespace DotNetCliPerf
                 config = config.With(JitOptimizationsValidator.DontFailOnError);
             }
 
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L74");
+
             var allBenchmarks = new List<Benchmark>();
             foreach (var type in typeof(Program).Assembly.GetTypes().Where(t => !t.IsAbstract).Where(t => t.IsPublic))
             {
@@ -79,6 +81,8 @@ namespace DotNetCliPerf
 
             var selectedBenchmarks = (IEnumerable<Benchmark>)allBenchmarks;
             var parameters = ParametersToDictionary(options.Parameters);
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L85");
 
             // If not specified, default "Restore" to "true" for Core and "false" for Framework,
             // to match typical customer usage.
@@ -150,6 +154,8 @@ namespace DotNetCliPerf
                 });
             }
 
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L157");
+
             // Skip benchmarks with MSBuildFlavor=Core and NodeReuse=True, since Core MSBuild currently does
             // not support NodeReuse.
             selectedBenchmarks = selectedBenchmarks.Where(b =>
@@ -167,6 +173,8 @@ namespace DotNetCliPerf
                    b.Target.Type.Name.IndexOf("Framework", StringComparison.OrdinalIgnoreCase) >= 0) &&
                   b.Parameters["MSBuildVersion"].ToString().Equals("NotApplicable", StringComparison.OrdinalIgnoreCase)));
 
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L176");
+
             // If not specified, default "NodeReuse" to "true" for Framework, to match typical customer usage.
             if (!parameters.ContainsKey("NodeReuse"))
             {
@@ -183,6 +191,8 @@ namespace DotNetCliPerf
                     }
                 });
             }
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L195");
 
             // Large apps and "SourceChanged" methods can choose from SourceChanged.Leaf and SourceChanged.Root
             // All other apps and methods must use SourceChanged.NotApplicable
@@ -206,6 +216,8 @@ namespace DotNetCliPerf
             {
                 selectedBenchmarks = selectedBenchmarks.Where(b => ((SourceChanged)b.Parameters["SourceChanged"]) != SourceChanged.Root);
             }
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L220");
 
             selectedBenchmarks = selectedBenchmarks.
                 Where(b => !options.Types.Any() ||
