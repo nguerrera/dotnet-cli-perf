@@ -7,6 +7,7 @@ using BenchmarkDotNet.Validators;
 using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace DotNetCliPerf
@@ -35,8 +36,14 @@ namespace DotNetCliPerf
 
     class Program
     {
+        private static Stopwatch _stopwatch;
+
         static int Main(string[] args)
         {
+            _stopwatch = Stopwatch.StartNew();
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] Enter Main()");
+
             return Parser.Default.ParseArguments<Options>(args).MapResult(
                 options => Run(options),
                 _ => 1
@@ -45,6 +52,8 @@ namespace DotNetCliPerf
 
         private static int Run(Options options)
         {
+            Console.WriteLine($"[{_stopwatch.Elapsed}] Enter Run()");
+
             var job = new Job();
             job.Run.RunStrategy = RunStrategy.Monitoring;
             job.Run.LaunchCount = 1;
@@ -204,6 +213,8 @@ namespace DotNetCliPerf
                             Where(b => !options.Methods.Any() ||
                                        b.Target.Method.Name.ContainsAny(options.Methods, StringComparison.OrdinalIgnoreCase)).
                             Where(b => b.Parameters.Match(parameters));
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] Before BenchmarkRunner.Run()");
 
             BenchmarkRunner.Run(selectedBenchmarks.ToArray(), config);
 
