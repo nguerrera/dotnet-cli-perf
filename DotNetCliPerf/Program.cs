@@ -74,12 +74,19 @@ namespace DotNetCliPerf
             Console.WriteLine($"[{_stopwatch.Elapsed}] L74");
 
             var allBenchmarks = new List<Benchmark>();
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L77");
+
             foreach (var type in typeof(Program).Assembly.GetTypes().Where(t => !t.IsAbstract).Where(t => t.IsPublic))
             {
                 allBenchmarks.AddRange(BenchmarkConverter.TypeToBenchmarks(type, config).Benchmarks);
             }
 
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L84");
+
             var selectedBenchmarks = (IEnumerable<Benchmark>)allBenchmarks;
+
+            Console.WriteLine($"[{_stopwatch.Elapsed}] L88");
+
             var parameters = ParametersToDictionary(options.Parameters);
 
             Console.WriteLine($"[{_stopwatch.Elapsed}] L85");
